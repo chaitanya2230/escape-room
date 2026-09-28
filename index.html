@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ESCAPE THE ROOMS — Indie Puzzle Game</title>
+    <meta name="description" content="Find the path. Escape the room. A polished indie block-based puzzle escape browser game with 6 unique chambers.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Cinzel+Decorative:wght@700;900&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗝️</text></svg>">
+</head>
+<body>
+    <div id="app">
+        <!-- Full-Page Canvas Wrapper -->
+        <main id="canvas-container">
+            <canvas id="game-canvas"></canvas>
+
+            <!-- Minimal Gameplay HUD -->
+            <header id="game-hud" class="hidden">
+                <div class="hud-left">
+                    <div id="hud-hearts" class="hud-item hud-hearts" title="Lives">♥♥♥</div>
+                    <div id="hud-room-label" class="hud-item hud-room-tag">ROOM 01</div>
+                </div>
+
+                <div class="hud-center">
+                    <div id="hud-center-room" class="hud-item hud-pill">01 / 10</div>
+                </div>
+
+                <div class="hud-right">
+                    <div id="hud-keys" class="hud-item hud-pill">🔑 0/1</div>
+                    <div id="hud-timer" class="hud-item hud-pill">⏱ 00:00</div>
+                    <button id="btn-audio-toggle" class="hud-circle-btn" title="Toggle Sound">🔊</button>
+                    <button id="btn-pause" class="hud-circle-btn" title="Pause Game">⏸</button>
+                </div>
+
+                <!-- Collapsible Objectives Drawer -->
+                <div id="hud-objectives-drawer" class="hud-objectives-drawer">
+                    <button id="btn-toggle-objectives" class="objectives-toggle-btn" title="Toggle Objectives">
+                        <span id="hud-obj-summary">OBJECTIVES 0/3</span>
+                        <span id="hud-obj-icon">▾</span>
+                    </button>
+                    <div id="hud-objectives-panel" class="objectives-panel hidden">
+                        <div class="objectives-panel-header">OBJECTIVES</div>
+                        <div id="hud-objectives-list" class="objectives-list">
+                            <!-- Dynamic items with ✓ -->
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- BRAND NEW CINEMATIC HOME MAIN PAGE -->
+            <section id="screen-main-menu" class="ui-screen">
+                <!-- Atmospheric Background & Lighting Layers -->
+                <div class="home-bg"></div>
+                <div class="home-light-rays"></div>
+                <div class="home-torch-glow left-torch"></div>
+                <div class="home-torch-glow right-torch"></div>
+                <div class="home-vignette"></div>
+
+                <!-- Fullscreen Canvas for Rising Embers, Floating Runes & Interactive Cursor Trails -->
+                <canvas id="menu-particles-canvas"></canvas>
+
+                <!-- Top Bar -->
+                <div class="home-top-bar">
+                    <div class="home-chapter-badge">
+                        <span class="badge-sparkle">✦</span>
+                        <span class="badge-text">CHAPTER I : THE LABYRINTH</span>
+                        <span class="badge-sparkle">✦</span>
+                    </div>
+                </div>
+
+                <!-- Main Hero Center Stage -->
+                <div class="home-hero-stage">
+                    <!-- Ornate Floating Crest with Golden Key -->
+                    <div class="home-crest-wrap">
+                        <div class="home-crest-ring-outer"></div>
+                        <div class="home-crest-ring-inner"></div>
+                        <div class="home-crest-emblem">
+                            <span class="home-crest-key">🗝️</span>
+                        </div>
+                    </div>
+
+                    <!-- Grand Cinematic Typography Title -->
+                    <div class="home-title-container">
+                        <h1 class="home-title-escape">ESCAPE</h1>
+                        <div class="home-title-separator">
+                            <span class="sep-line left"></span>
+                            <span class="sep-gem">◆</span>
+                            <span class="sep-text">THE</span>
+                            <span class="sep-gem">◆</span>
+                            <span class="sep-line right"></span>
+                        </div>
+                        <h2 class="home-title-rooms">ROOMS</h2>
+                    </div>
+
+                    <!-- Subtitle / Tagline -->
+                    <p class="home-tagline">Ten perilous chambers. Hidden keys. Deadly traps. Can you break free?</p>
+
+                    <!-- Feature Pills -->
+                    <div class="home-feature-pills">
+                        <span class="feature-pill"><span class="pill-icon">🗝️</span> 10 Chambers</span>
+                        <span class="feature-pill"><span class="pill-icon">⏱️</span> Time Trials</span>
+                        <span class="feature-pill"><span class="pill-icon">⭐</span> 3-Star Mastery</span>
+                    </div>
+
+                    <!-- Action Command Console (Buttons) -->
+                    <div class="home-actions">
+                        <!-- Primary CTA Button: START GAME -->
+                        <button id="btn-play" class="home-btn-primary" aria-label="Start Game">
+                            <span class="btn-glow-aura"></span>
+                            <span class="btn-border-tracer"></span>
+                            <span class="btn-icon">▶</span>
+                            <span class="btn-label">START GAME</span>
+                            <span class="btn-shimmer"></span>
+                        </button>
+
+                        <!-- Secondary Actions Row -->
+                        <div class="home-btn-group">
+                            <button id="btn-levels" class="home-btn-secondary" aria-label="Chambers Level Select">
+                                <span class="sec-icon">🏛</span>
+                                <span>CHAMBERS</span>
+                            </button>
+                            <button id="btn-settings" class="home-btn-secondary" aria-label="Game Settings">
+                                <span class="sec-icon">⚙</span>
+                                <span>SETTINGS</span>
+                            </button>
+                            <button id="btn-credits" class="home-btn-secondary" aria-label="Credits">
+                                <span class="sec-icon">📜</span>
+                                <span>CREDITS</span>
+                            </button>
+                        </div>
+
+                        <!-- Keyboard Prompt Badge -->
+                        <div class="home-keyboard-hint">
+                            <span class="hint-key">ENTER</span> or <span class="hint-key">SPACE</span> to embark
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Ambient Controls & Status Bar -->
+                <footer class="home-bottom-bar">
+                    <div class="home-footer-left">
+                        <span class="status-dot"></span>
+                        <span>IMMERSIVE ESCAPE ADVENTURE</span>
+                    </div>
+                    <div class="home-footer-center">
+                        <span class="control-tag">WASD / ARROWS</span> Move
+                        <span class="footer-divider">•</span>
+                        <span class="control-tag">E</span> Interact
+                        <span class="footer-divider">•</span>
+                        <span class="control-tag">SHIFT</span> Sprint
+                    </div>
+                    <div class="home-footer-right">
+                        <span>v2.4 INDIE EDITION</span>
+                    </div>
+                </footer>
+            </section>
+
+
+            <!-- Cinematic Level Intro Screen -->
+            <section id="screen-level-intro" class="ui-screen hidden">
+                <div class="intro-card">
+                    <span id="intro-room-num" class="intro-room-badge">ROOM 01</span>
+                    <h2 id="intro-room-title" class="intro-title">THE BEGINNING</h2>
+                    <p id="intro-room-subtitle" class="intro-subtitle">"Find the key and reach the exit."</p>
+                    <button id="btn-start-room" class="btn btn-start-game">[ ENTER ROOM ]</button>
+                </div>
+            </section>
+
+            <!-- Level Select Screen (Chambers) -->
+            <section id="screen-level-select" class="ui-screen hidden">
+                <div class="chambers-container">
+                    <div class="screen-header">
+                        <div>
+                            <h2 class="chambers-title">CHAMBERS</h2>
+                            <p class="chambers-tagline">"Your journey through the rooms."</p>
+                        </div>
+                        <button id="btn-level-select-back" class="btn btn-glass-back">← BACK</button>
+                    </div>
+                    <div id="level-cards-container" class="chambers-grid">
+                        <!-- Populated dynamically by UI manager -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pause Modal -->
+            <div id="modal-pause" class="modal-overlay hidden">
+                <div class="modal-card">
+                    <span class="pause-icon-roman">⏸</span>
+                    <h2 class="modal-heading">PAUSED</h2>
+                    <div class="pause-title-divider">
+                        <span></span>
+                        <em>"Take your time."</em>
+                        <span></span>
+                    </div>
+                    <div class="modal-buttons">
+                        <button id="btn-resume" class="btn btn-start-game"><span class="btn-play-icon">▶</span> RESUME</button>
+                        <button id="btn-pause-restart" class="btn btn-glass">↻&nbsp; RESTART LEVEL</button>
+                        <button id="btn-pause-level-select" class="btn btn-glass">▦&nbsp; SELECT ROOM</button>
+                        <button id="btn-pause-main-menu" class="btn btn-glass">⌂&nbsp; MAIN MENU</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Level Complete Modal (ROOM CLEARED) -->
+            <div id="modal-level-complete" class="modal-overlay hidden">
+                <div class="modal-card">
+                    <h2 class="modal-heading title-cleared">ROOM CLEARED</h2>
+                    <div id="lc-stars" class="modal-stars">⭐⭐⭐</div>
+
+                    <div class="stats-box">
+                        <div class="stat-line">
+                            <span>ROOM</span>
+                            <span id="lc-room" class="stat-val">ROOM 01</span>
+                        </div>
+                        <div class="stat-line">
+                            <span>TIME</span>
+                            <span id="lc-time" class="stat-val">00:45</span>
+                        </div>
+                        <div class="stat-line">
+                            <span>DEATHS</span>
+                            <span id="lc-deaths" class="stat-val">0</span>
+                        </div>
+                        <div class="stat-line">
+                            <span>KEYS</span>
+                            <span id="lc-keys" class="stat-val">1/1</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-buttons">
+                        <button id="btn-next-level" class="btn btn-start-game">NEXT ROOM →</button>
+                        <button id="btn-lc-replay" class="btn btn-glass">↻&nbsp; REPLAY</button>
+                        <button id="btn-lc-level-select" class="btn btn-glass">▦&nbsp; CHAMBERS</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Over / Level Failed Modal -->
+            <div id="modal-game-over" class="modal-overlay hidden">
+                <div class="modal-card">
+                    <h2 class="modal-heading title-danger">ROOM FAILED</h2>
+                    <div class="pause-title-divider" style="margin:8px 0 18px;">
+                        <span></span>
+                        <em>"Your path ends here."</em>
+                        <span></span>
+                    </div>
+                    <div id="go-stats" class="stats-box" style="margin-bottom: 20px;">
+                        <div class="stat-line">
+                            <span>TIME</span>
+                            <span id="go-time" class="stat-val">00:00</span>
+                        </div>
+                        <div class="stat-line">
+                            <span>OBJECTIVES</span>
+                            <span id="go-objectives" class="stat-val">0/3</span>
+                        </div>
+                    </div>
+                    <div class="modal-buttons">
+                        <button id="btn-go-retry" class="btn btn-start-game">↻ RESTART ROOM</button>
+                        <button id="btn-go-level-select" class="btn btn-glass">▦&nbsp; LEVEL SELECT</button>
+                        <button id="btn-go-main-menu" class="btn btn-glass">⌂&nbsp; MAIN MENU</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grand Level 10 Final Celebration Modal -->
+            <div id="modal-final-celebration" class="modal-overlay hidden">
+                <div class="celebration-container">
+                    <div class="celebration-card">
+                        <div class="trophy-bounce">🏆</div>
+                        <h1 class="celebration-heading">CONGRATULATIONS!</h1>
+                        <h2 class="celebration-subheading">YOU ESCAPED ALL 10 ROOMS</h2>
+                        <div class="celebration-badge">ESCAPE MASTER</div>
+                        <div class="celebration-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="celebration-quote">"THE ROOMS HAVE BEEN CONQUERED."</p>
+
+                        <div class="celebration-stats-grid">
+                            <div class="c-stat-box">
+                                <span class="c-stat-label">ROOMS</span>
+                                <span class="c-stat-val">10 / 10</span>
+                            </div>
+                            <div class="c-stat-box">
+                                <span class="c-stat-label">TOTAL TIME</span>
+                                <span id="fc-total-time" class="c-stat-val">00:00</span>
+                            </div>
+                            <div class="c-stat-box">
+                                <span class="c-stat-label">TOTAL DEATHS</span>
+                                <span id="fc-total-deaths" class="c-stat-val">0</span>
+                            </div>
+                            <div class="c-stat-box">
+                                <span class="c-stat-label">OBJECTIVES</span>
+                                <span id="fc-total-objectives" class="c-stat-val">100%</span>
+                            </div>
+                        </div>
+
+                        <div class="celebration-actions">
+                            <button id="btn-final-play-again" class="btn btn-start-game btn-pulse-gold">▶ PLAY AGAIN</button>
+                            <button id="btn-final-level-select" class="btn btn-glass">▦ LEVEL SELECT</button>
+                            <button id="btn-final-main-menu" class="btn btn-glass">⌂ MAIN MENU</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Modal -->
+            <div id="modal-settings" class="modal-overlay hidden">
+                <div class="modal-card">
+                    <h2 class="modal-heading">SETTINGS</h2>
+                    <div class="pause-title-divider" style="margin:8px 0 20px;">
+                        <span></span>
+                        <em>"Customize your experience."</em>
+                        <span></span>
+                    </div>
+                    <div class="settings-list">
+                        <label class="setting-row">
+                            <span>Music</span>
+                            <input type="checkbox" id="chk-music" class="setting-toggle" checked>
+                        </label>
+                        <label class="setting-row">
+                            <span>Sound Effects</span>
+                            <input type="checkbox" id="chk-sfx" class="setting-toggle" checked>
+                        </label>
+                        <label class="setting-row">
+                            <span>Camera Shake</span>
+                            <input type="checkbox" id="chk-shake" class="setting-toggle" checked>
+                        </label>
+                        <div class="controls-summary">
+                            <span class="controls-title">CONTROLS</span>
+                            <p>WASD / Arrows — Move Character</p>
+                            <p>Shift — Sprint Boost</p>
+                            <p>E — Interact (Key, Door, Switch)</p>
+                            <p>P / Esc — Pause</p>
+                        </div>
+                        <button id="btn-reset-save" class="btn btn-danger-link">
+                            RESET PROGRESS
+                        </button>
+                    </div>
+                    <button id="btn-close-settings" class="btn btn-glass" style="width: 100%; margin-top: 4px;">← BACK</button>
+                </div>
+            </div>
+
+            <!-- Credits Modal -->
+            <div id="modal-credits" class="modal-overlay hidden">
+                <div class="modal-card credits-modal-card">
+                    <div class="credits-crest">🗝️</div>
+                    <h2 class="credits-main-title">ESCAPE THE ROOMS</h2>
+                    <p class="credits-sub-tagline">A Puzzle Adventure Game</p>
+
+                    <div class="credits-divider">
+                        <span class="gold-line"></span>
+                        <span class="sep-gem">◆</span>
+                        <span class="gold-line"></span>
+                    </div>
+
+                    <div class="credits-body">
+                        <div class="credits-block">
+                            <span class="credits-label">DESIGNED & DEVELOPED BY</span>
+                            <span class="credits-name">CHAITANYA</span>
+                        </div>
+
+                        <div class="credits-badge">
+                            <span>A CHAITANYA PRODUCT</span>
+                        </div>
+
+                        <p class="credits-motto">Explore. Solve. Escape.</p>
+                    </div>
+
+                    <div class="credits-footer">
+                        <p>© 2026 Chaitanya</p>
+                        <p class="rights">All Rights Reserved.</p>
+                    </div>
+
+                    <button id="btn-close-credits" class="btn btn-glass credits-back-btn">← BACK</button>
+                </div>
+            </div>
+
+            <!-- Mobile Touch Controls -->
+            <div id="touch-controls" class="hidden">
+                <div class="dpad">
+                    <button id="touch-up" class="touch-btn">▲</button>
+                    <button id="touch-left" class="touch-btn">◀</button>
+                    <button id="touch-down" class="touch-btn">▼</button>
+                    <button id="touch-right" class="touch-btn">▶</button>
+                </div>
+                <div class="touch-actions">
+                    <button id="touch-interact" class="touch-btn action-interact" title="Interact">E</button>
+                    <button id="touch-sprint" class="touch-btn action-btn" title="Sprint">⚡</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modular Game Scripts in correct dependency order -->
+    <script src="src/audio.js"></script>
+    <script src="src/camera.js"></script>
+    <script src="src/objectives.js"></script>
+    <script src="src/obstacles.js"></script>
+    <script src="src/player.js"></script>
+    <script src="src/levels.js"></script>
+    <script src="src/levelManager.js"></script>
+    <script src="src/ui.js"></script>
+    <script src="src/game.js"></script>
+    <script src="src/menuAtmosphere.js"></script>
+    <script src="src/main.js"></script>
+</body>
+</html>

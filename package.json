@@ -1,0 +1,20 @@
+{
+  "name": "escape-the-rooms",
+  "version": "1.0.0",
+  "description": "Escape The Rooms - A 10-level indie puzzle adventure browser game",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve .",
+    "build": "echo 'Production static build ready'"
+  },
+  "keywords": [
+    "game",
+    "puzzle",
+    "canvas",
+    "escape-room",
+    "html5"
+  ],
+  "author": "Chaitanya",
+  "license": "MIT"
+}
