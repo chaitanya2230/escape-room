@@ -5,8 +5,7 @@
   "main": "index.html",
   "scripts": {
     "dev": "npx serve .",
-    "start": "npx serve .",
-    "build": "echo 'Production static build ready'"
+    "start": "npx serve ."
   },
   "keywords": [
     "game",
